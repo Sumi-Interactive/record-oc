@@ -69,8 +69,6 @@ SCSiriWaveformView *waveformView;
 }
 
 - (void)levelMeterChanged:(float)levelMeter {
-    float normalizedValue = pow(10, levelMeter/20);
-    NSLog(@"%f",levelMeter);
     [waveformView updateWithLevel:levelMeter];
 }
 
