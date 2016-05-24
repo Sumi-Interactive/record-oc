@@ -58,31 +58,53 @@ AudioQueueLevelMeterState *levelMeterStates;
         
         mAQRecorder = new AQRecorder();
         
-        OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, (__bridge void *)self);
-        if (error) printf("ERROR INITIALIZING AUDIO SESSION! %d\n", (int)error);
-        else
-        {
-            UInt32 category = kAudioSessionCategory_PlayAndRecord;
-            error = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(category), &category);
-            if (error) printf("couldn't set audio category!");
+//        OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, (__bridge void *)self);
+//        if (error) printf("ERROR INITIALIZING AUDIO SESSION! %d\n", (int)error);
+//        else
+//        {
+//            UInt32 category = kAudioSessionCategory_PlayAndRecord;
+//            error = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(category), &category);
+//            if (error) printf("couldn't set audio category!");
+//            
+//            error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, propListener, (__bridge void *)self);
+//            if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", (int)error);
+//            UInt32 inputAvailable = 0;
+//            UInt32 size = sizeof(inputAvailable);
+//            
+//            // we do not want to allow recording if input is not available
+//            error = AudioSessionGetProperty(kAudioSessionProperty_AudioInputAvailable, &size, &inputAvailable);
+//            if (error) printf("ERROR GETTING INPUT AVAILABILITY! %d\n", (int)error);
+//            
+//            // we also need to listen to see if input availability changes
+//            error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioInputAvailable, propListener, (__bridge void *)self);
+//            if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", (int)error);
+//            
+//            error = AudioSessionSetActive(true); 
+//            if (error) printf("AudioSessionSetActive (true) failed");
+//        }
+        NSError *error;
+        if (error){
+            NSLog(@"ERROR INITIALIZING AUDIO SESSION! %@\n", error);
+        } else {
+            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+            if (error) NSLog(@"couldn't set audio category!");
             
-            error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, propListener, (__bridge void *)self);
-            if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", (int)error);
-            UInt32 inputAvailable = 0;
-            UInt32 size = sizeof(inputAvailable);
+//            error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, propListener, (__bridge void *)self);
+//            if (error) NSLog(@"ERROR ADDING AUDIO SESSION PROP LISTENER! %@\n", error);
+//            UInt32 inputAvailable = 0;
+//            UInt32 size = sizeof(inputAvailable);
+//            
+//            // we do not want to allow recording if input is not available
+//            error = AudioSessionGetProperty(kAudioSessionProperty_AudioInputAvailable, &size, &inputAvailable);
+//            if (error) NSLog(@"ERROR GETTING INPUT AVAILABILITY! %@\n", error);
+//            
+//            // we also need to listen to see if input availability changes
+//            error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioInputAvailable, propListener, (__bridge void *)self);
+//            if (error) NSLog(@"ERROR ADDING AUDIO SESSION PROP LISTENER! %@\n", error);
             
-            // we do not want to allow recording if input is not available
-            error = AudioSessionGetProperty(kAudioSessionProperty_AudioInputAvailable, &size, &inputAvailable);
-            if (error) printf("ERROR GETTING INPUT AVAILABILITY! %d\n", (int)error);
-            
-            // we also need to listen to see if input availability changes
-            error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioInputAvailable, propListener, (__bridge void *)self);
-            if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", (int)error);
-            
-            error = AudioSessionSetActive(true); 
-            if (error) printf("AudioSessionSetActive (true) failed");
+            [[AVAudioSession sharedInstance] setActive:TRUE error:&error];
+            if (error) NSLog(@"AudioSessionSetActive (true) failed");
         }
-        
     }
     
     filename = [NSString stringWithString:[Encapsulator defaultFileName]];
@@ -187,7 +209,7 @@ AudioQueueLevelMeterState *levelMeterStates;
 }
 
 #pragma mark AudioSession listeners
-void interruptionListener(	void *	inClientData,
+static void interruptionListener(	void *	inClientData,
                           UInt32	inInterruptionState)
 {
 	RecorderManager *THIS = (__bridge RecorderManager*)inClientData;
