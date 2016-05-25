@@ -10,10 +10,13 @@
 #import "RecorderManager.h"
 #import "PlayerManager.h"
 #import "SCSiriWaveformView.h"
+
 @interface ViewController () <RecordingDelegate, PlayingDelegate>
 @property (nonatomic, copy) NSString *filename;
 @property (nonatomic, assign) BOOL isRecording;
 @property (nonatomic, assign) BOOL isPlaying;
+@property (weak, nonatomic) IBOutlet UIButton *recordButton;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
 
 @end
 
@@ -22,25 +25,42 @@ SCSiriWaveformView *waveformView;
 @implementation ViewController
 
 - (void)viewDidLoad {
+    NSLog(@"hfurie");
     [super viewDidLoad];
     [self initWaveFormView];
-    // Do any additional setup after loading the view, typically from a nib.
+    self.isRecording = NO;
+    self.isPlaying = NO;
+    [RecorderManager sharedManager].delegate = self;
+    [PlayerManager sharedManager].delegate = self;
+    NSLog(@"fewbhj");
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 - (IBAction)record:(id)sender {
-    [RecorderManager sharedManager].delegate = self;
-    [[RecorderManager sharedManager] startRecording];
+    if (self.isRecording) {
+        [[RecorderManager sharedManager] stopRecording];
+        [self.recordButton setTitle:@"record" forState:UIControlStateNormal];
+        [self.playButton setEnabled:true];
+    } else {
+        [[RecorderManager sharedManager] startRecording];
+        [self.recordButton setTitle:@"stop" forState:UIControlStateNormal];
+        [self.playButton setEnabled:false];
+    }
+    self.isRecording = !self.isRecording;
 }
 - (IBAction)play:(id)sender {
-    [PlayerManager sharedManager].delegate = nil;
-    [[PlayerManager sharedManager] playAudioWithFileName:self.filename delegate:self];
-}
-- (IBAction)stop:(id)sender {
-    [[RecorderManager sharedManager] stopRecording];
+    if (self.isRecording) {
+        [[PlayerManager sharedManager] stopPlaying];
+        [self.playButton setTitle:@"play" forState:UIControlStateNormal];
+        [self.recordButton setEnabled:true];
+    } else {
+        [[PlayerManager sharedManager] playAudioWithFileName:self.filename delegate:self];
+        [self.playButton setTitle:@"stop" forState:UIControlStateNormal];
+        [self.recordButton setEnabled:false];
+    }
+    self.isPlaying = !self.isPlaying;
 }
 -(void)initWaveFormView {
     waveformView = [[SCSiriWaveformView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 100)];
@@ -54,6 +74,7 @@ SCSiriWaveformView *waveformView;
 - (void)recordingFinishedWithFileName:(NSString *)filePath time:(NSTimeInterval)interval {
     self.isRecording = NO;
     self.filename = filePath;
+    NSLog(@"qwe:%@",filePath);
 }
 
 - (void)recordingTimeout {
@@ -74,6 +95,9 @@ SCSiriWaveformView *waveformView;
 
 - (void)playingStoped {
     self.isPlaying = NO;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.playButton setTitle:@"play" forState:UIControlStateNormal];
+        [self.recordButton setEnabled:true];
+    });
 }
-
 @end

@@ -56,7 +56,7 @@ static PlayerManager *mPlayerManager = nil;
         
         //初始化播放器的时候如下设置
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionPortBuiltInSpeaker error:nil];
+        //[[AVAudioSession sharedInstance] setCategory:AVAudioSessionPortBuiltInSpeaker error:nil];
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         [[AVAudioSession sharedInstance] setActive:YES error:nil];
     }
@@ -77,7 +77,7 @@ static PlayerManager *mPlayerManager = nil;
         self.decapsulator.delegate = self;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         [self.decapsulator play];
-        
+
         [self startProximityMonitering];
     }
     else if ([filename rangeOfString:@".mp3"].location != NSNotFound) {
