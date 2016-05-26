@@ -31,18 +31,38 @@
                                 <rect key="frame" x="285" y="269" width="30" height="30"/>
                                 <state key="normal" title="play"/>
                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="151" y="287" width="98" height="63"/>
+                                    <rect key="frame" x="151" y="207" width="98" height="63"/>
                                 </variation>
                                 <connections>
                                     <action selector="play:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RuW-lU-2zs"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QT9-PX-3MM">
+                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="165" y="283" width="70" height="54"/>
+                                </variation>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="QT9-PX-3MM"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="QT9-PX-3MM"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="playButton" destination="W9N-er-JC8" id="9od-0B-Wnh"/>
                         <outlet property="recordButton" destination="121-Gc-akB" id="l7k-Js-k5v"/>
+                        <outlet property="timerOfPlaying" destination="QT9-PX-3MM" id="QC5-ZF-FgT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

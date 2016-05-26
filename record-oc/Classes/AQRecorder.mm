@@ -70,7 +70,7 @@ int AQRecorder::ComputeRecordBufferSize(const AudioStreamBasicDescription *forma
             errorStatus = AudioQueueGetProperty(mQueue, kAudioQueueProperty_MaximumOutputPacketSize, &maxPacketSize,
                                                 &propertySize);
             if (errorStatus) {
-                NSLog(@"ComputeRecordBufferSize error:%ld", errorStatus);
+                NSLog(@"ComputeRecordBufferSize error:%d", errorStatus);
                 return 0;
             }
         }
@@ -109,7 +109,7 @@ void AQRecorder::MyInputBufferHandler(	void *								inUserData,
     if (aqr->IsRunning()) {
         OSStatus errorStatus = AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
         if (errorStatus) {
-            NSLog(@"MyInputBufferHandler error:%ld", errorStatus);
+            NSLog(@"MyInputBufferHandler error:%d", errorStatus);
             return;
         }
     }
@@ -166,7 +166,7 @@ Boolean AQRecorder::StartRecord(Encapsulator *encapsulator) {
                                      NULL /* run loop */, NULL /* run loop mode */,
                                      0 /* flags */, &mQueue);
     if (errorStatus) {
-        NSLog(@"StartRecord error:%ld when AudioQueueNewInput ", errorStatus);
+        NSLog(@"StartRecord error:%d when AudioQueueNewInput ", errorStatus);
         return false;
     }
     
@@ -178,13 +178,13 @@ Boolean AQRecorder::StartRecord(Encapsulator *encapsulator) {
     errorStatus = AudioQueueGetProperty(mQueue, kAudioQueueProperty_StreamDescription,
                                         &mRecordFormat, &size);
     if (errorStatus) {
-        NSLog(@"StartRecord error:%ld when AudioQueueGetProperty StreamDescription", errorStatus);
+        NSLog(@"StartRecord error:%d when AudioQueueGetProperty StreamDescription", errorStatus);
     }
     
     UInt32 val = 1;
     errorStatus = AudioQueueSetProperty(mQueue, kAudioQueueProperty_EnableLevelMetering, &val, sizeof(UInt32));
     if (errorStatus) {
-        NSLog(@"StartRecord error:%ld when AudioQueueGetProperty LevelMetering", errorStatus);
+        NSLog(@"StartRecord error:%d when AudioQueueGetProperty LevelMetering", errorStatus);
     }
     
     // allocate and enqueue buffers
@@ -193,14 +193,14 @@ Boolean AQRecorder::StartRecord(Encapsulator *encapsulator) {
         errorStatus = AudioQueueAllocateBuffer(mQueue, bufferByteSize, &mBuffers[i]);
         errorStatus = AudioQueueEnqueueBuffer(mQueue, mBuffers[i], 0, NULL);
         if (errorStatus) {
-            NSLog(@"StartRecord error:%ld alloc and enqueue buffer", errorStatus);
+            NSLog(@"StartRecord error:%d alloc and enqueue buffer", errorStatus);
         }
     }
     // start the queue
     mIsRunning = true;
     errorStatus = AudioQueueStart(mQueue, NULL);
     if (errorStatus) {
-        NSLog(@"StartRecord error:%ld", errorStatus);
+        NSLog(@"StartRecord error:%d", errorStatus);
         return false;
     }
     return true;
@@ -212,7 +212,7 @@ void AQRecorder::StopRecord()
 	mIsRunning = false;
 	errorStatus = AudioQueueStop(mQueue, true);
     if (errorStatus) {
-        NSLog(@"StopRecord error:%ld", errorStatus);
+        NSLog(@"StopRecord error:%d", errorStatus);
     }
 	AudioQueueDispose(mQueue, true);
     

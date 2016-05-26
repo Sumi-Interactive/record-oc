@@ -17,22 +17,23 @@
 @property (nonatomic, assign) BOOL isPlaying;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UILabel *timerOfPlaying;
 
 @end
 
 SCSiriWaveformView *waveformView;
-
+NSTimeInterval fileTime;
+NSTimer *timer;
+NSInteger countOfTimer;
 @implementation ViewController
 
 - (void)viewDidLoad {
-    NSLog(@"hfurie");
     [super viewDidLoad];
     [self initWaveFormView];
     self.isRecording = NO;
     self.isPlaying = NO;
     [RecorderManager sharedManager].delegate = self;
     [PlayerManager sharedManager].delegate = self;
-    NSLog(@"fewbhj");
 }
 
 - (void)didReceiveMemoryWarning {
@@ -51,14 +52,19 @@ SCSiriWaveformView *waveformView;
     self.isRecording = !self.isRecording;
 }
 - (IBAction)play:(id)sender {
-    if (self.isRecording) {
+    if (self.isPlaying) {
         [[PlayerManager sharedManager] stopPlaying];
         [self.playButton setTitle:@"play" forState:UIControlStateNormal];
         [self.recordButton setEnabled:true];
+        [timer invalidate];
+        self.timerOfPlaying.text = @"";
     } else {
         [[PlayerManager sharedManager] playAudioWithFileName:self.filename delegate:self];
         [self.playButton setTitle:@"stop" forState:UIControlStateNormal];
         [self.recordButton setEnabled:false];
+        
+        countOfTimer = 0;
+        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimeLabel:) userInfo:nil repeats:YES];
     }
     self.isPlaying = !self.isPlaying;
 }
@@ -74,7 +80,7 @@ SCSiriWaveformView *waveformView;
 - (void)recordingFinishedWithFileName:(NSString *)filePath time:(NSTimeInterval)interval {
     self.isRecording = NO;
     self.filename = filePath;
-    NSLog(@"qwe:%@",filePath);
+    fileTime = interval;
 }
 
 - (void)recordingTimeout {
@@ -94,10 +100,21 @@ SCSiriWaveformView *waveformView;
 }
 
 - (void)playingStoped {
+    NSLog(@"endlangker");
     self.isPlaying = NO;
-    dispatch_async(dispatch_get_main_queue(), ^{
+//    dispatch_async(dispatch_get_main_queue(), ^{
         [self.playButton setTitle:@"play" forState:UIControlStateNormal];
         [self.recordButton setEnabled:true];
-    });
+        [timer invalidate];
+        self.timerOfPlaying.text = @"";
+//    });
+}
+
+#pragma mark - timer callback
+
+-(void)updateTimeLabel:(NSTimer*)theTimer {
+    countOfTimer++;
+    self.timerOfPlaying.text = [NSString stringWithFormat:@"%ld",(long)countOfTimer];
+    NSLog(@"qwe:%ld",(long)countOfTimer);
 }
 @end
