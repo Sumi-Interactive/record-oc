@@ -100,9 +100,8 @@ NSInteger countOfTimer;
 }
 
 - (void)playingStoped {
-    NSLog(@"endlangker");
     self.isPlaying = NO;
-//    dispatch_async(dispatch_get_main_queue(), ^{
+//    dispatch_sync(dispatch_get_main_queue(), ^{
         [self.playButton setTitle:@"play" forState:UIControlStateNormal];
         [self.recordButton setEnabled:true];
         [timer invalidate];
@@ -115,6 +114,5 @@ NSInteger countOfTimer;
 -(void)updateTimeLabel:(NSTimer*)theTimer {
     countOfTimer++;
     self.timerOfPlaying.text = [NSString stringWithFormat:@"%ld",(long)countOfTimer];
-    NSLog(@"qwe:%ld",(long)countOfTimer);
 }
 @end

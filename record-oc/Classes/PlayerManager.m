@@ -144,13 +144,13 @@ static PlayerManager *mPlayerManager = nil;
 }
 
 - (void)startProximityMonitering {
-//    [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:YES];
 //    NSLog(@"开启距离监听");
 }
 
 - (void)stopProximityMonitering {
-//    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-//    [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
 //    NSLog(@"关闭距离监听");
 }
 
