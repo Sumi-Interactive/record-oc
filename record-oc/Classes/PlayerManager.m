@@ -70,7 +70,7 @@ static PlayerManager *mPlayerManager = nil;
     if ([filename rangeOfString:@".spx"].location != NSNotFound) {
         [[AVAudioSession sharedInstance] setActive:YES error:nil];
         
-        [self stopPlaying];
+//        [self stopPlaying];
         self.delegate = newDelegate;
         
         self.decapsulator = [[Decapsulator alloc] initWithFileName:filename];

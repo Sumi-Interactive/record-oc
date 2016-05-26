@@ -101,12 +101,12 @@ NSInteger countOfTimer;
 
 - (void)playingStoped {
     self.isPlaying = NO;
-//    dispatch_sync(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         [self.playButton setTitle:@"play" forState:UIControlStateNormal];
         [self.recordButton setEnabled:true];
         [timer invalidate];
         self.timerOfPlaying.text = @"";
-//    });
+    });
 }
 
 #pragma mark - timer callback
