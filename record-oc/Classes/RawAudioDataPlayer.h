@@ -27,6 +27,7 @@
     NSMutableData *mPcmData;
     NSUInteger readedBytes;
     NSMutableArray *emptyAudioQueueBufferIndexs;
+    NSTimer *currentTimer;
 }
 
 @property (nonatomic, assign) BOOL isDataInputOver;

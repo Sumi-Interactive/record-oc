@@ -49,6 +49,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PLAY_OVER object:nil];
         return;
     }
+    currentTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(getCurrentPlayingTime:) userInfo:nil repeats:YES];
     for(int i=0;i<QUEUE_BUFFER_SIZE;i++) {
         [self readPCMAndPlay:audioQueue buffer:audioQueueBuffers[i]];
     }
@@ -121,7 +122,9 @@
                 //所有数据都输入并且读取完了
                 if ([emptyAudioQueueBufferIndexs count] == QUEUE_BUFFER_SIZE) {
                     NSLog(@"audio queue play over");
+                    [currentTimer invalidate];
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PLAY_OVER object:nil];
+                    
                 }
             }
             else {
@@ -201,6 +204,18 @@ static void AudioPlayerAQInputCallback(void *input, AudioQueueRef outQ, AudioQue
         RawAudioDataPlayer *player = (__bridge RawAudioDataPlayer *)input;
         [player putEmptyBuffer:outQB];
         [player readPCMAndPlay:outQ buffer:outQB];
+    }
+}
+
+-(void)getCurrentPlayingTime:(id)sender {
+    AudioQueueTimelineRef timeLine;
+    AudioTimeStamp timeStamp;
+    if(AudioQueueCreateTimeline(audioQueue, &timeLine)==noErr){
+        AudioQueueGetCurrentTime(audioQueue, timeLine, &timeStamp, NULL);
+        float currentTime = timeStamp.mSampleTime / audioDescription.mSampleRate;
+        NSDictionary *dict =[[NSDictionary alloc] initWithObjectsAndKeys:[NSString stringWithFormat:@"%f",currentTime],@"currentTime",nil];
+        NSNotification *notification =[NSNotification notificationWithName:@"updateCurrentTime" object:nil userInfo:dict];
+        [[NSNotificationCenter defaultCenter] postNotification:notification];
     }
 }
 

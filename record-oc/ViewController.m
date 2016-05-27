@@ -23,8 +23,6 @@
 
 SCSiriWaveformView *waveformView;
 NSTimeInterval fileTime;
-NSTimer *timer;
-NSInteger countOfTimer;
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -34,6 +32,7 @@ NSInteger countOfTimer;
     self.isPlaying = NO;
     [RecorderManager sharedManager].delegate = self;
     [PlayerManager sharedManager].delegate = self;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTimeLabel:) name:@"updateCurrentTime" object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -56,15 +55,11 @@ NSInteger countOfTimer;
         [[PlayerManager sharedManager] stopPlaying];
         [self.playButton setTitle:@"play" forState:UIControlStateNormal];
         [self.recordButton setEnabled:true];
-        [timer invalidate];
         self.timerOfPlaying.text = @"";
     } else {
         [[PlayerManager sharedManager] playAudioWithFileName:self.filename delegate:self];
         [self.playButton setTitle:@"stop" forState:UIControlStateNormal];
         [self.recordButton setEnabled:false];
-        
-        countOfTimer = 0;
-        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimeLabel:) userInfo:nil repeats:YES];
     }
     self.isPlaying = !self.isPlaying;
 }
@@ -104,15 +99,13 @@ NSInteger countOfTimer;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.playButton setTitle:@"play" forState:UIControlStateNormal];
         [self.recordButton setEnabled:true];
-        [timer invalidate];
         self.timerOfPlaying.text = @"";
     });
 }
 
-#pragma mark - timer callback
+#pragma mark - notify callback
 
--(void)updateTimeLabel:(NSTimer*)theTimer {
-    countOfTimer++;
-    self.timerOfPlaying.text = [NSString stringWithFormat:@"%ld",(long)countOfTimer];
+-(void)updateTimeLabel:(NSNotification *)text {
+    self.timerOfPlaying.text = [NSString stringWithFormat:@"00:%.2d/00:%.2d",[text.userInfo[@"currentTime"] intValue],(int)fileTime];
 }
 @end
