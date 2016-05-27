@@ -29,5 +29,7 @@
 
 - (void)playAudioWithFileName:(NSString *)filename delegate:(id<PlayingDelegate>)newDelegate;
 - (void)stopPlaying;
+- (void)continuePlaying;
+- (void)pausePlaying;
 
 @end

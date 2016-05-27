@@ -23,6 +23,7 @@
 
 SCSiriWaveformView *waveformView;
 NSTimeInterval fileTime;
+NSInteger currentPlaySecond;
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -33,6 +34,9 @@ NSTimeInterval fileTime;
     [RecorderManager sharedManager].delegate = self;
     [PlayerManager sharedManager].delegate = self;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTimeLabel:) name:@"updateCurrentTime" object:nil];
+    
+    currentPlaySecond = 0;
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -50,15 +54,24 @@ NSTimeInterval fileTime;
     }
     self.isRecording = !self.isRecording;
 }
+- (IBAction)stop:(id)sender {
+    [[PlayerManager sharedManager] stopPlaying];
+    [self.recordButton setEnabled:true];
+    [self.playButton setTitle:@"play" forState:UIControlStateNormal];
+}
 - (IBAction)play:(id)sender {
     if (self.isPlaying) {
-        [[PlayerManager sharedManager] stopPlaying];
+        [[PlayerManager sharedManager] pausePlaying];
         [self.playButton setTitle:@"play" forState:UIControlStateNormal];
         [self.recordButton setEnabled:true];
         self.timerOfPlaying.text = @"";
     } else {
-        [[PlayerManager sharedManager] playAudioWithFileName:self.filename delegate:self];
-        [self.playButton setTitle:@"stop" forState:UIControlStateNormal];
+        if (currentPlaySecond==0) {
+            [[PlayerManager sharedManager] playAudioWithFileName:self.filename delegate:self];
+        } else {
+            [[PlayerManager sharedManager] continuePlaying];
+        }
+        [self.playButton setTitle:@"pause" forState:UIControlStateNormal];
         [self.recordButton setEnabled:false];
     }
     self.isPlaying = !self.isPlaying;
@@ -106,6 +119,7 @@ NSTimeInterval fileTime;
 #pragma mark - notify callback
 
 -(void)updateTimeLabel:(NSNotification *)text {
-    self.timerOfPlaying.text = [NSString stringWithFormat:@"00:%.2d/00:%.2d",[text.userInfo[@"currentTime"] intValue],(int)fileTime];
+    currentPlaySecond = [text.userInfo[@"currentTime"] intValue];
+    self.timerOfPlaying.text = [NSString stringWithFormat:@"00:%.2ld/00:%.2d",(long)currentPlaySecond,(int)fileTime];
 }
 @end

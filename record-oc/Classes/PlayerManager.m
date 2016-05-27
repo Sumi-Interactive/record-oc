@@ -8,6 +8,7 @@
 
 #import "PlayerManager.h"
 #import <UIKit/UIKit.h>
+#import "RawAudioDataPlayer.h"
 @interface PlayerManager ()
 
 - (void)startProximityMonitering;  //开启距离感应器监听(开始播放时)
@@ -114,7 +115,7 @@ static PlayerManager *mPlayerManager = nil;
     if (self.decapsulator) {
         [self.decapsulator stopPlaying];
 //        self.decapsulator.delegate = nil;   //此行如果放在上一行之前会导致回调问题
-        self.decapsulator = nil;
+//        self.decapsulator = nil;
     }
     if (self.avAudioPlayer) {
         [self.avAudioPlayer stop];
@@ -124,6 +125,14 @@ static PlayerManager *mPlayerManager = nil;
     }
     
     [self.delegate playingStoped];
+}
+
+- (void)continuePlaying {
+    [self.decapsulator.player continuePlay];
+}
+
+- (void)pausePlaying {
+    [self.decapsulator.player pausePlay];
 }
 
 - (void)decapsulatingAndPlayingOver {

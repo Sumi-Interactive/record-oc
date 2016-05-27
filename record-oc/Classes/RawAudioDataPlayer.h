@@ -22,6 +22,7 @@
     AudioQueueBufferRef audioQueueBuffers[QUEUE_BUFFER_SIZE];//音频缓存
     NSLock *synlock ;///同步控制
     Byte *pcmDataBuffer;//pcm的读文件数据区
+    AudioTimeStamp timeStamp;
     
     BOOL isDataInputOver;
     NSMutableData *mPcmData;
@@ -36,6 +37,8 @@ static void AudioPlayerAQInputCallback(void *input, AudioQueueRef inQ, AudioQueu
 
 - (void)startPlay;
 - (void)stopPlay;
+- (void)pausePlay;
+- (void)continuePlay;
 - (void)inputNewDataFromBuffer:(Byte *)buffer size:(int)bufferSize;
 
 @end

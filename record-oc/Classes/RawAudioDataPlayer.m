@@ -64,6 +64,14 @@
     AudioQueueDispose(audioQueue, YES);
 }
 
+-(void)pausePlay {
+    AudioQueuePause(audioQueue);
+}
+
+-(void)continuePlay {
+    AudioQueueStart(audioQueue, &(timeStamp));
+}
+
 
 -(void)initAudio {
     ///设置音频参数
@@ -209,7 +217,6 @@ static void AudioPlayerAQInputCallback(void *input, AudioQueueRef outQ, AudioQue
 
 -(void)getCurrentPlayingTime:(id)sender {
     AudioQueueTimelineRef timeLine;
-    AudioTimeStamp timeStamp;
     if(AudioQueueCreateTimeline(audioQueue, &timeLine)==noErr){
         AudioQueueGetCurrentTime(audioQueue, timeLine, &timeStamp, NULL);
         float currentTime = timeStamp.mSampleTime / audioDescription.mSampleRate;
